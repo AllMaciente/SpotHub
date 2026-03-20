@@ -1,5 +1,7 @@
 # Dependencies
 node_modules/
+app/backend/node_modules/
+app/frontend/node_modules/
 __pycache__/
 *.pyc
 .env
@@ -33,3 +35,8 @@ coverage/
 *.tmp
 *.temp
 .
+
+# Prisma
+node_modules/.prisma/
+app/backend/generated/
+
