@@ -9,13 +9,14 @@ import { HashService } from 'src/hash/hash.service';
 import { jwtConstants } from './constants';
 
 @Module({
-  imports: [JwtModule.register({
-    global: true,
-    secret: jwtConstants.secret,
-    signOptions: { expiresIn: '1d' },
-
-  })],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '1d' },
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, PrismaService, SnowflakeService, HashService],
 })
-export class AuthModule { }
+export class AuthModule {}

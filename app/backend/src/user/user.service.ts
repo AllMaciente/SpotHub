@@ -5,16 +5,14 @@ import { userPublicSelect } from './user.select';
 
 @Injectable()
 export class UserService {
-    constructor(
-        private prisma: PrismaService
-    ) { }
+  constructor(private prisma: PrismaService) {}
 
-    async getAll(query: QueryUserDto) {
-        const { page, limit } = query
-        return this.prisma.user.findMany({
-            take: limit,
-            skip: (page - 1) * limit,
-            select: userPublicSelect
-        })
-    }
+  async getAll(query: QueryUserDto) {
+    const { page, limit } = query;
+    return this.prisma.user.findMany({
+      take: limit,
+      skip: (page - 1) * limit,
+      select: userPublicSelect,
+    });
+  }
 }

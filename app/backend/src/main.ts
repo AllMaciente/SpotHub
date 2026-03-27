@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ZodValidationPipe } from 'nestjs-zod';
 
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { apiReference } from '@scalar/nestjs-api-reference';
@@ -16,15 +16,18 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('SpotHub API')
-    .setDescription("")
+    .setDescription('')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   // SwaggerModule.setup('docs', app, document);
-  app.use('/docs', apiReference({
-    content: document
-  }))
+  app.use(
+    '/docs',
+    apiReference({
+      content: document,
+    }),
+  );
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();
