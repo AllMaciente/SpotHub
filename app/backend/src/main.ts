@@ -4,6 +4,7 @@ import { ZodValidationPipe } from 'nestjs-zod';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 
 import { AppModule } from './app.module';
+import { apiReference } from '@scalar/nestjs-api-reference';
 
 (BigInt.prototype as any).toJSON = function () {
   return this.toString();
@@ -20,7 +21,10 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  // SwaggerModule.setup('docs', app, document);
+  app.use('/docs', apiReference({
+    content: document
+  }))
   await app.listen(process.env.PORT ?? 3000);
 }
 bootstrap();

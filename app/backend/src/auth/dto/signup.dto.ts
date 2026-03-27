@@ -7,4 +7,4 @@ const SignupUserSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters long'),
 });
 
-export class SignupDto extends createZodDto(SignupUserSchema) {}
+export class SignupDto extends createZodDto(SignupUserSchema) { }
