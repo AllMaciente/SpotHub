@@ -2,11 +2,23 @@
 description: Criar documentaçao swagger de maneira automatica
 agent: build
 ---
+---
+
+description: Criar documentaçao swagger de maneira automatica
+agent: build
+------------
+
 You are a senior backend engineer specializing in NestJS, Zod (`nestjs-zod`), and Swagger (OpenAPI).
 
 ## Goal
 
-Safely snapshot the current project state, then incrementally improve API documentation using Zod `.describe()` and Swagger response decorators — with detailed, well-structured commits.
+Safely snapshot the current project state, then incrementally improve API documentation using Zod `.describe()` and Swagger response decorators.
+
+This command MUST be idempotent:
+
+* It can be executed multiple times
+* It must NOT duplicate or overwrite good existing documentation
+* It must ONLY improve what is missing or weak
 
 ---
 
@@ -15,29 +27,8 @@ Safely snapshot the current project state, then incrementally improve API docume
 Before making ANY changes:
 
 1. Stage all changes (including untracked files)
-
-2. Analyze the diff and group changes by context (e.g., auth, users, infra, etc.)
-
-3. Create a **detailed commit message**, NOT generic.
-
-### Commit message rules:
-
-* Must describe WHAT is being committed
-* Must reference main modules/files affected
-* Must be structured
-
-### Example:
-
-```bash
-git add .
-git commit -m "chore: snapshot before swagger improvements
-
-- auth: guard, service and jwt strategy updates
-- users: initial query implementation with pagination
-- prisma: schema adjustments and migrations
-- infra: docker and environment setup
-"
-```
+2. Analyze the diff and group changes by context
+3. Create a detailed, structured commit message
 
 🚨 DO NOT proceed until this commit is created.
 
@@ -47,29 +38,60 @@ git commit -m "chore: snapshot before swagger improvements
 
 For EVERY DTO using Zod:
 
-* Add `.describe()` to ALL fields
-* Descriptions must be meaningful and helpful for frontend usage
+### Behavior rules (IDEMPOTENT):
+
+* If a field already has `.describe()` → KEEP IT
+* If description is weak or generic → IMPROVE IT
+* If missing → ADD `.describe()`
 
 ### Example:
 
 ```ts
 z.string().describe('User full name')
 z.string().email().describe('User email address')
-z.string().uuid().describe('Unique user identifier')
-z.number().int().describe('Page number for pagination')
 ```
 
 ### Rules:
 
 * Do NOT change validation logic
 * Do NOT rename fields
-* Only enhance documentation
+* Do NOT remove existing descriptions unless replacing with a better one
 
 ---
 
-## Step 3 — CONTROLLER DOCUMENTATION
+## Step 3 — CONTROLLER DOCUMENTATION (BASED ON REAL CODE)
 
 For EVERY controller and route:
+
+---
+
+### 🚨 CRITICAL RULE — REAL DATA ONLY
+
+Before documenting:
+
+* Inspect controller
+* Inspect service methods
+* Inspect Prisma queries (select/include)
+* Inspect DTOs
+
+❌ DO NOT assume responses
+❌ DO NOT invent fields
+❌ DO NOT use generic examples
+
+---
+
+### IDEMPOTENT RULES
+
+* If `@ApiOperation` already exists:
+
+  * Improve it ONLY if it's vague
+* If response decorators already exist:
+
+  * KEEP them if correct
+  * IMPROVE examples/descriptions if weak
+  * ADD only if missing
+
+---
 
 ### DO NOT ADD:
 
@@ -80,14 +102,14 @@ For EVERY controller and route:
 
 ---
 
-### ADD:
+### ADD OR IMPROVE:
 
 #### 1. Operation description
 
 ```ts
 @ApiOperation({
-  summary: 'Short summary',
-  description: 'Clear explanation of what this endpoint does',
+  summary: 'Clear and concise summary',
+  description: 'Accurate explanation based on real behavior',
 })
 ```
 
@@ -98,101 +120,33 @@ For EVERY controller and route:
 Use:
 
 * `@ApiOkResponse`
-* `@ApiCreatedResponse` (for POST)
+* `@ApiCreatedResponse`
 
-Include:
+Rules:
 
-* description
-* realistic example (NOT generic)
+* Prefer DTO (`type`)
+* Use `isArray` when needed
+* Add REAL examples based on actual return
 
 ---
 
-#### 3. Error responses (when applicable)
+#### 3. Error responses
+
+Add ONLY if they exist in code:
 
 * `@ApiBadRequestResponse`
 * `@ApiUnauthorizedResponse`
 * `@ApiNotFoundResponse`
 
-Use consistent format:
-
-```json
-{
-  "statusCode": 400,
-  "message": "Error message",
-  "error": "Bad Request"
-}
-```
-
 ---
 
-#### 4. Prefer DTO usage
+## Step 4 — NO FINAL COMMITS
 
-```ts
-@ApiOkResponse({
-  type: UserDto,
-})
-```
+🚨 IMPORTANT:
 
-For arrays:
-
-```ts
-@ApiOkResponse({
-  type: UserDto,
-  isArray: true,
-})
-```
-
----
-
-## Step 4 — COMMITS AFTER CHANGES (IMPORTANT)
-
-After making changes:
-
-### DO NOT create a single commit for everything.
-
-Instead, create **multiple commits grouped by context**.
-
----
-
-### Commit rules:
-
-Each commit must:
-
-* Be scoped (per module or feature)
-* Clearly describe what was improved
-* Mention Zod + Swagger when relevant
-
----
-
-### Examples:
-
-```bash
-git add src/users/dto
-git commit -m "docs(users): add Zod .describe() to user DTOs
-
-- document id, name, email fields
-- improve clarity for API consumers
-"
-```
-
-```bash
-git add src/users/user.controller.ts
-git commit -m "docs(users): enhance swagger responses and operation descriptions
-
-- add ApiOperation descriptions
-- document success responses with examples
-- add error response documentation
-"
-```
-
-```bash
-git add src/auth
-git commit -m "docs(auth): improve authentication endpoint documentation
-
-- add detailed operation descriptions
-- document success and unauthorized responses
-"
-```
+* DO NOT create commits after documentation changes
+* DO NOT auto-stage files
+* Leave all changes unstaged for manual review
 
 ---
 
@@ -200,20 +154,31 @@ git commit -m "docs(auth): improve authentication endpoint documentation
 
 * Do NOT change business logic
 * Do NOT introduce breaking changes
-* Do NOT remove existing functionality
-* Keep code clean and consistent
-* Prefer English for all descriptions
-* Avoid generic descriptions like "Get data"
+* Do NOT remove valid existing documentation
+* Prefer English
+* Avoid generic descriptions
+
+---
+
+## Step 6 — QUALITY CHECK (VERY IMPORTANT)
+
+Before finishing:
+
+* Ensure no duplicate decorators were added
+* Ensure no conflicting decorators exist
+* Ensure formatting is clean
+* Ensure consistency across files
 
 ---
 
 ## Expected Outcome
 
-* All DTOs have `.describe()`
-* Controllers have detailed Swagger documentation
-* Responses include realistic examples
-* Commits are well-structured and meaningful
-* Project remains stable and functional
+* Missing documentation is added
+* Weak documentation is improved
+* Good documentation is preserved
+* No duplication
+* No assumptions
+* Safe to run multiple times
 
 ---
 
