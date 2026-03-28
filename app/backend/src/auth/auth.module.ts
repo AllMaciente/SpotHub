@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SnowflakeService } from 'src/snowflake/snowflake.service';
 import { HashService } from 'src/hash/hash.service';
-import { jwtConstants } from './constants';
+import { jwtConstants } from '../common/constants';
 
 @Module({
   imports: [
@@ -19,4 +19,4 @@ import { jwtConstants } from './constants';
   controllers: [AuthController],
   providers: [AuthService, PrismaService, SnowflakeService, HashService],
 })
-export class AuthModule {}
+export class AuthModule { }

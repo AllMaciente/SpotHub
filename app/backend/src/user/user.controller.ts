@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
 import {
   ApiOperation,
   ApiResponse,
@@ -11,11 +11,12 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { QueryUserDto } from './dto/queryUser.dto';
 import { UserDto } from './dto/user-response.dto';
 import { UserService } from './user.service';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Controller('user')
 @ApiBearerAuth()
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) { }
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -36,5 +37,11 @@ export class UserController {
   })
   async getAllUser(@Query() query: QueryUserDto) {
     return this.userService.getAll(query);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update')
+  async updateUser(@Body() data: UpdateUserDto, @Req() request) {
+    return this.userService.updateUser(data, request)
   }
 }
