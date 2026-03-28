@@ -35,7 +35,7 @@ export class AuthController {
     type: SignupResponseDto,
   })
   @ApiResponse({
-    status: 401,
+    status: 409,
     description: 'User with this email already exists',
   })
   async signup(@Body() data: SignupDto) {

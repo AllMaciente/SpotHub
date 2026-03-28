@@ -7,7 +7,7 @@ export const SignupResponseSchema = z.object({
   id: z.string().describe('User unique identifier'),
   name: z.string().describe('User full name'),
   email: z.string().email().describe('User email address'),
-  role: z.nativeEnum(Role)
+  role: z.nativeEnum(Role).describe('User role (ADMIN, GESTOR, or USER)')
 });
 
 export class SignupResponseDto extends createZodDto(SignupResponseSchema) { }

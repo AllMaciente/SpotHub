@@ -4,6 +4,8 @@ import {
   ApiResponse,
   ApiUnauthorizedResponse,
   ApiBearerAuth,
+  ApiNotFoundResponse,
+  ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
@@ -41,6 +43,24 @@ export class UserController {
 
   @UseGuards(AuthGuard)
   @Post('update')
+  @ApiOperation({
+    summary: 'Update user profile',
+    description: 'Updates user profile. ADMIN can update any user; non-admin can only update their own profile. Only ADMIN can change roles.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully',
+    type: UserDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized - invalid or missing JWT token',
+  })
+  @ApiNotFoundResponse({
+    description: 'User not found',
+  })
+  @ApiForbiddenResponse({
+    description: 'Forbidden - you can only update your own profile, or only ADMIN can change roles',
+  })
   async updateUser(@Body() data: UpdateUserDto, @Req() request) {
     return this.userService.updateUser(data, request)
   }
