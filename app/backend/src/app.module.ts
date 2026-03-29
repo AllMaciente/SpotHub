@@ -5,9 +5,10 @@ import { PrismaService } from './prisma/prisma.service';
 import { HashService } from './hash/hash.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserModule } from './user/user.module';
+import { RoomsModule } from './rooms/rooms.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UserModule],
+  imports: [ConfigModule.forRoot(), AuthModule, UserModule, RoomsModule],
   controllers: [],
   providers: [SnowflakeService, PrismaService, HashService],
 })
