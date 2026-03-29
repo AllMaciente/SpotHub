@@ -7,12 +7,14 @@ const PaginationSchema = z.object({
     .int()
     .min(1)
     .max(100)
-    .default(10),
+    .default(10)
+    .describe('Maximum number of items to return per page'),
   page: z.coerce
     .number()
     .int()
     .min(1)
-    .default(1),
+    .default(1)
+    .describe('Page number for pagination'),
 });
 
 export class PaginationDto extends createZodDto(PaginationSchema) {}
