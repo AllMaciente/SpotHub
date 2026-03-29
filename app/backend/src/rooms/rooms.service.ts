@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateRoomDto } from './dto/createRooms.dto';
 import { UpdateRoomDto } from './dto/updateRoom.dto';
 
@@ -13,13 +14,9 @@ export class RoomsService {
         return this.prisma.room.create({ data })
     }
 
-    findAll(onlyActive: boolean) {
-        return this.prisma.room.findMany({
-            where: {
-                ...(onlyActive && { active: true })
-            },
-            orderBy: { name: 'asc' }
-        })
+    findAll(query: PaginationDto, onlyActive: boolean) {
+        const where = onlyActive ? { active: true } : {};
+        return this.prisma.paginate('room', query, { where });
     }
 
     findOne(id: string) {
