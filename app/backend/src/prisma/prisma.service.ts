@@ -23,4 +23,34 @@ export class PrismaService
   async onModuleDestroy() {
     await this.$disconnect();
   }
+
+  async paginate(
+    model: keyof PrismaClient,
+    query: { page: number; limit: number },
+    options?: {
+      where?: Record<string, any>;
+      select?: Record<string, any>;
+    },
+  ) {
+    const { page, limit } = query;
+    const { where, select } = options || {};
+    const [data, total] = await Promise.all([
+      (this[model] as any).findMany({
+        where,
+        select,
+        take: limit,
+        skip: (page - 1) * limit,
+      }),
+      (this[model] as any).count({ where }),
+    ]);
+    return {
+      data,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
 }
