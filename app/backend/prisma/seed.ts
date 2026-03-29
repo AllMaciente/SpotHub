@@ -1,11 +1,22 @@
-import { PrismaClient } from '../src/generated/prisma';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../src/generated/prisma/client.js';
 import { faker } from '@faker-js/faker';
 import * as argon2 from 'argon2';
 
-const prisma = new PrismaClient();
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+const adapter = new PrismaPg(pool as any);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log('🌱 Starting seed...');
+
+  await prisma.reservation.deleteMany();
+  await prisma.room.deleteMany();
+  await prisma.user.deleteMany();
+  console.log('🗑️ Cleared existing data');
 
   const hashedPassword = await argon2.hash('password123');
 
@@ -42,10 +53,10 @@ async function main() {
   for (let i = 0; i < 8; i++) {
     const room = await prisma.room.create({
       data: {
-        name: `Sala ${faker.location.room()}`,
+        name: `Sala ${i + 1}`,
         capacity: faker.number.int({ min: 4, max: 20 }),
         resources: roomResources[i],
-        location: faker.location.floor(),
+        location: `Andar ${faker.number.int({ min: 1, max: 5 })}`,
         active: true,
       },
     });
