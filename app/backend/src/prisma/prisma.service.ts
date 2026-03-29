@@ -30,14 +30,18 @@ export class PrismaService
     options?: {
       where?: Record<string, any>;
       select?: Record<string, any>;
+      include?: Record<string, any>;
+      orderBy?: Record<string, any>;
     },
   ) {
     const { page, limit } = query;
-    const { where, select } = options || {};
+    const { where, select, include, orderBy } = options || {};
     const [data, total] = await Promise.all([
       (this[model] as any).findMany({
         where,
         select,
+        include,
+        orderBy,
         take: limit,
         skip: (page - 1) * limit,
       }),
