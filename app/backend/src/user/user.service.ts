@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { QueryUserDto } from './dto/queryUser.dto';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { userPublicSelect } from './user.select';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
@@ -8,13 +8,8 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 export class UserService {
   constructor(private prisma: PrismaService) { }
 
-  async getAll(query: QueryUserDto) {
-    const { page, limit } = query;
-    return this.prisma.user.findMany({
-      take: limit,
-      skip: (page - 1) * limit,
-      select: userPublicSelect,
-    });
+  async getAll(query: PaginationDto) {
+    return this.prisma.paginate('user', query, { select: userPublicSelect });
   }
 
   async updateUser(data: UpdateUserDto, req) {
