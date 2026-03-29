@@ -67,16 +67,17 @@ export class ReservationsService {
         });
     }
 
-    findByPeriod(roomId?: string, from?: Date, to?: Date) {
-        return this.prisma.reservation.findMany({
-            where: {
-                ...(roomId && { roomId }),
-                status: { not: 'CANCELLED' },
-                start: { gte: from ?? new Date() },
-                ...(to && { fim: { lte: to } }),
-            },
+    findByPeriod(query: PaginationDto, roomId?: string, from?: Date, to?: Date) {
+        const where = {
+            ...(roomId && { roomId }),
+            status: { not: 'CANCELLED' },
+            start: { gte: from ?? new Date() },
+            ...(to && { end: { lte: to } }),
+        };
+        return this.prisma.paginate('reservation', query, {
+            where,
             include: { room: true, user: { select: { id: true, name: true } } },
-            orderBy: { start: 'asc' },
+            orderBy: { start: 'asc' }
         });
     }
 }

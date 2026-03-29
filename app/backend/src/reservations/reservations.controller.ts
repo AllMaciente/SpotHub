@@ -29,11 +29,13 @@ export class ReservationsController {
     @UseGuards(RolesGuard)
     @Roles('ADMIN', 'GESTOR')
     findAll(
+        @Query() query: PaginationDto,
         @Query('roomId') roomId?: string,
         @Query('from') from?: string,
         @Query('to') to?: string,
     ) {
         return this.reservations.findByPeriod(
+            query,
             roomId,
             from ? new Date(from) : undefined,
             to ? new Date(to) : undefined,
