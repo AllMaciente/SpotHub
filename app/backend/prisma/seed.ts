@@ -20,7 +20,7 @@ async function main() {
 
   const hashedPassword = await argon2.hash('password123');
 
-  const users = [];
+  const users: any[] = [];
   const roles: Array<'ADMIN' | 'GESTOR' | 'USER'> = ['ADMIN', 'GESTOR', 'USER'];
 
   for (let i = 0; i < 15; i++) {
@@ -49,7 +49,7 @@ async function main() {
     ['Quadro Branco'],
   ];
 
-  const rooms = [];
+  const rooms: any[] = [];
   for (let i = 0; i < 8; i++) {
     const room = await prisma.room.create({
       data: {
