@@ -2,6 +2,7 @@ import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseBoolPipe, 
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { CreateRoomDto } from './dto/createRooms.dto';
 import { UpdateRoomDto } from './dto/updateRoom.dto';
 import { RoomsService } from './rooms.service';
@@ -21,8 +22,11 @@ export class RoomsController {
     }
 
     @Get()
-    findAll(@Query('onlyActive', new DefaultValuePipe(true), ParseBoolPipe) onlyActive: boolean) {
-        return this.rooms.findAll(onlyActive)
+    findAll(
+        @Query() query: PaginationDto,
+        @Query('onlyActive', new DefaultValuePipe(true), ParseBoolPipe) onlyActive: boolean
+    ) {
+        return this.rooms.findAll(query, onlyActive)
     }
 
     @Get(':id')
