@@ -19,4 +19,4 @@ import { jwtConstants } from '../common/constants';
   controllers: [AuthController],
   providers: [AuthService, PrismaService, SnowflakeService, HashService],
 })
-export class AuthModule { }
+export class AuthModule {}
