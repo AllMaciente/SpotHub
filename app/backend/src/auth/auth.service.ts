@@ -15,7 +15,7 @@ export class AuthService {
     private snowflake: SnowflakeService,
     private hash: HashService,
     private jwt: JwtService,
-  ) { }
+  ) {}
 
   async signup(data: SignupDto) {
     const userAlreadyExists = await this.prisma.user.findUnique({
