@@ -9,7 +9,13 @@ import { RoomsModule } from './rooms/rooms.module';
 import { ReservationsModule } from './reservations/reservations.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, UserModule, RoomsModule, ReservationsModule],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    UserModule,
+    RoomsModule,
+    ReservationsModule,
+  ],
   controllers: [],
   providers: [SnowflakeService, PrismaService, HashService],
 })
