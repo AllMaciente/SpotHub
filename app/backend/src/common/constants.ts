@@ -3,5 +3,5 @@ export const jwtConstants = {
 };
 
 export const reservationConstants = {
-  CANCELLATION_DEADLINE_HOURS: 1
-}
+  CANCELLATION_DEADLINE_HOURS: 1,
+};
