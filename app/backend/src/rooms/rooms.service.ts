@@ -6,24 +6,22 @@ import { UpdateRoomDto } from './dto/updateRoom.dto';
 
 @Injectable()
 export class RoomsService {
-    constructor(
-        private prisma: PrismaService
-    ) { }
+  constructor(private prisma: PrismaService) {}
 
-    create(data: CreateRoomDto) {
-        return this.prisma.room.create({ data })
-    }
+  create(data: CreateRoomDto) {
+    return this.prisma.room.create({ data });
+  }
 
-    findAll(query: PaginationDto, onlyActive: boolean) {
-        const where = onlyActive ? { active: true } : {};
-        return this.prisma.paginate('room', query, { where });
-    }
+  findAll(query: PaginationDto, onlyActive: boolean) {
+    const where = onlyActive ? { active: true } : {};
+    return this.prisma.paginate('room', query, { where });
+  }
 
-    findOne(id: string) {
-        return this.prisma.room.findFirstOrThrow({ where: { id } })
-    }
+  findOne(id: string) {
+    return this.prisma.room.findFirstOrThrow({ where: { id } });
+  }
 
-    update(id: string, data: UpdateRoomDto) {
-        return this.prisma.room.update({ where: { id }, data })
-    }
+  update(id: string, data: UpdateRoomDto) {
+    return this.prisma.room.update({ where: { id }, data });
+  }
 }
