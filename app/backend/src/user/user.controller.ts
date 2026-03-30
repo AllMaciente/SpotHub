@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiOperation,
   ApiResponse,
@@ -18,7 +26,7 @@ import { UpdateUserDto } from './dto/updateUser.dto';
 @Controller('user')
 @ApiBearerAuth()
 export class UserController {
-  constructor(private userService: UserService) { }
+  constructor(private userService: UserService) {}
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
@@ -45,7 +53,8 @@ export class UserController {
   @Post('update')
   @ApiOperation({
     summary: 'Update user profile',
-    description: 'Updates user profile. ADMIN can update any user; non-admin can only update their own profile. Only ADMIN can change roles.',
+    description:
+      'Updates user profile. ADMIN can update any user; non-admin can only update their own profile. Only ADMIN can change roles.',
   })
   @ApiResponse({
     status: 200,
@@ -59,9 +68,10 @@ export class UserController {
     description: 'User not found',
   })
   @ApiForbiddenResponse({
-    description: 'Forbidden - you can only update your own profile, or only ADMIN can change roles',
+    description:
+      'Forbidden - you can only update your own profile, or only ADMIN can change roles',
   })
   async updateUser(@Body() data: UpdateUserDto, @Req() request) {
-    return this.userService.updateUser(data, request)
+    return this.userService.updateUser(data, request);
   }
 }
