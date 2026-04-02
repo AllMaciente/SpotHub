@@ -12,6 +12,7 @@ export class PrismaService
     const pool = new Pool({
       connectionString: process.env.DATABASE_URL,
     });
+
     const adapter = new PrismaPg(pool as any);
     super({
       adapter,
@@ -28,16 +29,22 @@ export class PrismaService
     model: keyof PrismaClient,
     query: { page: number; limit: number },
     options?: {
-      where?: Record<string, any>;
-      select?: Record<string, any>;
-      include?: Record<string, any>;
-      orderBy?: Record<string, any>;
+      where?: Record<string, unknown>;
+      select?: Record<string, unknown>;
+      include?: Record<string, unknown>;
+      orderBy?: Record<string, unknown>;
     },
-  ) {
+  ): Promise<{
+    data: unknown[];
+    meta: { total: number; page: number; limit: number; totalPages: number };
+  }> {
     const { page, limit } = query;
     const { where, select, include, orderBy } = options || {};
-    const [data, total] = await Promise.all([
-      (this[model] as any).findMany({
+
+    const dynamicModel = this[model] as any;
+
+    const [data, total]: [any[], number] = await Promise.all([
+      dynamicModel.findMany({
         where,
         select,
         include,
@@ -45,10 +52,11 @@ export class PrismaService
         take: limit,
         skip: (page - 1) * limit,
       }),
-      (this[model] as any).count({ where }),
+
+      dynamicModel.count({ where }),
     ]);
     return {
-      data,
+      data: data as unknown[],
       meta: {
         total,
         page,
