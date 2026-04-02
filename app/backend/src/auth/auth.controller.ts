@@ -19,6 +19,10 @@ import { SignupResponseDto, SigninResponseDto } from './dto/auth-response.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 
+interface AuthRequest {
+  user: { id: bigint; role: string; email: string };
+}
+
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -70,7 +74,7 @@ export class AuthController {
     description: 'Current user information',
     type: SignupResponseDto,
   })
-  async me(@Request() request) {
+  me(@Request() request: AuthRequest) {
     return request.user;
   }
 }
