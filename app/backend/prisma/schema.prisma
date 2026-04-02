@@ -1,0 +1,58 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  GESTOR
+  USER
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  CANCELLED
+  PENDING
+}
+
+model User {
+  id           BigInt        @id
+  email        String        @unique
+  password     String
+  name         String
+  role         Role          @default(USER)
+  reservations Reservation[]
+}
+
+model Room {
+  id           String        @id @default(uuid())
+  name         String
+  capacity     Int
+  resources    String[]
+  location     String?
+  active       Boolean       @default(true)
+  createAt     DateTime      @default(now())
+  reservations Reservation[]
+}
+
+model Reservation {
+  id       String            @id @default(uuid())
+  roomId   String
+  userId   BigInt
+  start    DateTime
+  end      DateTime
+  status   ReservationStatus @default(CONFIRMED)
+  title    String?
+  createAt DateTime          @default(now())
+
+  room Room @relation(fields: [roomId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([roomId, start, end])
+  @@index([userId])
+}

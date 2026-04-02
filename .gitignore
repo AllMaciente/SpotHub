@@ -33,3 +33,7 @@ coverage/
 *.tmp
 *.temp
 .
+
+# Prisma
+node_modules/.prisma/
+app/backend/generated/
