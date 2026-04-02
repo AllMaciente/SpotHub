@@ -19,9 +19,13 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { PaginationDto } from 'src/common/dto/pagination.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 import { UserDto } from './dto/user-response.dto';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './dto/updateUser.dto';
+
+interface AuthRequest {
+  user: { id: bigint; role: string };
+}
 
 @Controller('user')
 @ApiBearerAuth()
@@ -71,7 +75,7 @@ export class UserController {
     description:
       'Forbidden - you can only update your own profile, or only ADMIN can change roles',
   })
-  async updateUser(@Body() data: UpdateUserDto, @Req() request) {
+  async updateUser(@Body() data: UpdateUserDto, @Req() request: AuthRequest) {
     return this.userService.updateUser(data, request);
   }
 }
