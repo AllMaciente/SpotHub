@@ -25,6 +25,10 @@ import { CreateReservationDto } from './dto/createReservation.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 
+interface AuthRequest {
+  user: { id: bigint; role: string };
+}
+
 @Controller('reservations')
 @ApiBearerAuth()
 @UseGuards(AuthGuard)
@@ -46,7 +50,7 @@ export class ReservationsController {
   @ApiBadRequestResponse({
     description: 'Invalid request data or room already occupied',
   })
-  create(@Body() data: CreateReservationDto, @Req() request) {
+  create(@Body() data: CreateReservationDto, @Req() request: AuthRequest) {
     const userId = request.user.id;
     return this.reservations.create(data, userId);
   }
@@ -63,7 +67,7 @@ export class ReservationsController {
   @ApiUnauthorizedResponse({
     description: 'Unauthorized - invalid or missing JWT token',
   })
-  findByUser(@Req() request, @Query() query: PaginationDto) {
+  findByUser(@Req() request: AuthRequest, @Query() query: PaginationDto) {
     const userId = request.user.id;
     return this.reservations.findByUser(userId, query);
   }
@@ -121,7 +125,7 @@ export class ReservationsController {
   @ApiBadRequestResponse({
     description: 'Cancellation deadline passed',
   })
-  cancel(@Param('id') id: string, @Req() request) {
+  cancel(@Param('id') id: string, @Req() request: AuthRequest) {
     const { id: requesterId, role } = request.user;
     return this.reservations.cancel(id, requesterId, role);
   }
