@@ -8,6 +8,10 @@ import { PaginationDto } from 'src/common/dto/pagination.dto';
 import { userPublicSelect } from './user.select';
 import { UpdateUserDto } from './dto/updateUser.dto';
 
+interface AuthRequest {
+  user: { id: bigint; role: string };
+}
+
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
@@ -16,10 +20,11 @@ export class UserService {
     return this.prisma.paginate('user', query, { select: userPublicSelect });
   }
 
-  async updateUser(data: UpdateUserDto, req) {
+  async updateUser(data: UpdateUserDto, req: AuthRequest) {
     const { id: requesterId, role: requesterRole } = req.user;
     const targetUserId = data.userId ?? requesterId;
-    const { userId, ...updateData } = data;
+    const updateData = { ...data };
+    delete (updateData as { userId?: bigint }).userId;
 
     const targetUser = await this.prisma.user.findUnique({
       where: { id: targetUserId },
