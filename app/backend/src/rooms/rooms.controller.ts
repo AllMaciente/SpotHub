@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   DefaultValuePipe,
-  Delete,
   Get,
   Param,
   ParseBoolPipe,
